@@ -1,0 +1,77 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  FRONTEND_IMAGE: kaiburr-frontend
+
+jobs:
+  frontend-ci:
+    name: Frontend CI - Build & Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Code Build - npm
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci
+          echo "🔨 Building React Frontend..."
+          npm run build
+          echo "✅ Frontend build completed!"
+          ls -lh dist/
+
+      - name: Docker Build - Frontend
+        run: |
+          echo "🐳 Building Docker image for Frontend..."
+          docker build -t ${{ env.FRONTEND_IMAGE }}:${{ github.run_number }} .
+          docker build -t ${{ env.FRONTEND_IMAGE }}:latest .
+          echo "✅ Docker image built successfully!"
+
+      - name: Docker Push - Simulate
+        run: |
+          echo "=========================================="
+          echo "🚀 DOCKER PUSH SIMULATION - FRONTEND"
+          echo "=========================================="
+          echo "Image Tag 1: ${{ env.FRONTEND_IMAGE }}:${{ github.run_number }}"
+          echo "Image Tag 2: ${{ env.FRONTEND_IMAGE }}:latest"
+          echo "Registry: docker.io/${{ github.repository_owner }}"
+          echo "Full Image: docker.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE }}:${{ github.run_number }}"
+          echo "✅ Image build and tag successful!"
+          echo "=========================================="
+
+      - name: Upload Frontend Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+          retention-days: 7
+
+      - name: Generate Summary
+        run: |
+          echo "==========================================="
+          echo "🎯 FRONTEND CI PIPELINE SUMMARY"
+          echo "==========================================="
+          echo "📅 Date: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "🔢 Run Number: ${{ github.run_number }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "👤 Triggered by: ${{ github.actor }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
+          echo "🐳 Docker Image: ${{ env.FRONTEND_IMAGE }}:${{ github.run_number }}"
+          echo "==========================================="
