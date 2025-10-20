@@ -1,35 +1,171 @@
 # Kaiburr Assessment - Task 3
-## Web UI Forms for Task Management
+## Web UI for Task Management
 
-A modern, responsive React-based web frontend for the Kaiburr Task Management API. Built with React 18, TypeScript, and Ant Design components.
+A React-based frontend application providing a user interface for managing tasks via the Kaiburr REST API. Built with modern web technologies and responsive design.
 
 ## Technology Stack
 
-- **React**: 18.2.0 (Functional Components with Hooks)
-- **TypeScript**: 5.2.2
-- **Ant Design**: 5.12.0 (UI Component Library)
-- **Axios**: 1.6.0 (HTTP Client)
-- **Vite**: 5.0.8 (Build Tool & Dev Server)
-- **Day.js**: 1.11.10 (Date Formatting)
+- React 18.2.0
+- TypeScript 5.2.2
+- Ant Design 5.12.0 (UI Components)
+- Axios 1.6.0 (HTTP Client)
+- Vite 5.0.8 (Build Tool)
+- Tailwind CSS (Styling)
 
 ## Features
 
-**View All Tasks** - Display all tasks in a responsive table with sorting and pagination  
-**Search Tasks** - Find tasks by name with real-time search  
-**Create Tasks** - Add new tasks with validation  
-**Execute Tasks** - Run task commands and view results  
-**Delete Tasks** - Remove tasks with confirmation  
-**View Execution History** - See detailed command output and execution times  
-**Responsive Design** - Works on desktop, tablet, and mobile devices  
-**Accessible UI** - WCAG compliant with keyboard navigation support
+- View all tasks in a sortable, paginated table
+- Search tasks by name
+- Create new tasks with form validation
+- Execute tasks and view command output
+- Delete tasks with confirmation
+- View execution history with timestamps
+- Responsive design for all screen sizes
+- Real-time API integration
 
 ## Prerequisites
 
-Before running this application, ensure you have:
+- Node.js 16 or higher
+- npm package manager
+- Backend API running on `http://localhost:8080` (Task 1)
 
-1. **Node.js** (version 16 or higher) - [Download here](https://nodejs.org/)
-2. **npm** package manager
-3. **Backend API** running on `http://localhost:8080` (from Task 1)
+## Installation & Setup
+
+Clone the repository:
+```bash
+git clone https://github.com/Mah03esh/kaiburr-task3.git
+cd kaiburr-task3
+```
+
+Install dependencies:
+```bash
+npm install
+```
+
+Run development server:
+```bash
+npm run dev
+```
+
+The application starts on `http://localhost:3000`
+
+Build for production:
+```bash
+npm run build
+```
+
+## API Configuration
+
+The frontend connects to the backend API. Update the API base URL in `src/services/api.ts` if needed:
+
+```typescript
+const API_BASE_URL = 'http://localhost:8080/api/tasks';
+```
+
+## Project Structure
+
+```
+task3/
+├── src/
+│   ├── components/
+│   │   ├── TaskList.tsx       # Main task display component
+│   │   └── TaskForm.tsx       # Task creation form
+│   ├── services/
+│   │   └── api.ts             # API integration layer
+│   ├── App.tsx                # Root component
+│   └── main.tsx               # Application entry point
+├── public/
+├── Dockerfile                 # Container configuration
+├── nginx.conf                 # Production server config
+├── package.json
+└── vite.config.ts
+```
+
+## Components Overview
+
+### TaskList Component
+- Displays all tasks in Ant Design Table
+- Implements search functionality
+- Handles task execution and deletion
+- Shows execution history in expandable rows
+- Pagination and sorting support
+
+### TaskForm Component
+- Modal-based form for task creation
+- Input validation
+- Connects to PUT /api/tasks endpoint
+
+### API Service
+- Centralized HTTP client using Axios
+- Error handling and response formatting
+- Endpoints:
+  - `getAllTasks()` - GET /api/tasks
+  - `createTask()` - PUT /api/tasks
+  - `executeTask()` - PUT /api/tasks/execute/{id}
+  - `deleteTask()` - DELETE /api/tasks/{id}
+  - `searchTasks()` - GET /api/tasks/find?name={name}
+
+## Docker Deployment
+
+Build the Docker image:
+```bash
+docker build -t kaiburr-task3-frontend .
+```
+
+Run the container:
+```bash
+docker run -p 3000:80 kaiburr-task3-frontend
+```
+
+The application uses a multi-stage build:
+1. Build stage: Compiles React app with Vite
+2. Production stage: Serves static files with nginx
+
+## Testing & Validation
+
+All UI interactions have been tested manually. Test scenarios follow the Given-When-Then syntax.
+
+### Test Scenarios
+
+**Scenario 1: Application Startup**  
+Given Node.js and dependencies are installed  
+When the development server starts via `npm run dev`  
+Then the application loads on port 3000 and connects to the backend API  
+
+**Scenario 2: View All Tasks**  
+Given tasks exist in the backend database  
+When the homepage loads  
+Then all tasks are displayed in a table with columns for name, owner, command, and actions  
+
+**Scenario 3: Search Tasks by Name (Success)**  
+Given tasks with matching names exist  
+When a user enters a search term in the search input  
+Then the table filters to show only matching tasks  
+
+**Scenario 4: Search Tasks by Name (Not Found)**  
+Given no tasks match the search criteria  
+When a user enters a non-existent task name  
+Then the table displays "No Data" message  
+
+**Scenario 5: Create New Task**  
+Given the user clicks "Create Task" button  
+When the form is filled with name, owner, and command  
+Then a PUT request is sent and the new task appears in the table  
+
+**Scenario 6: Execute Task**  
+Given a task exists in the table  
+When the user clicks the "Execute" button  
+Then the command runs and execution details appear in the expanded row  
+
+**Scenario 7: Delete Task**  
+Given a task exists in the table  
+When the user clicks "Delete" and confirms  
+Then the task is removed from the database and table  
+
+**Scenario 8: View Execution History**  
+Given a task has been executed  
+When the user expands the task row  
+Then execution history shows startTime, endTime, and output
 
 ## Project Structure
 
@@ -56,53 +192,14 @@ task3/
 └── README.md             # This file
 ```
 
-## Installation & Setup
+## Author
 
-### 1. Clone or Navigate to the Project
+Mahesh  
+Created for Kaiburr Assessment - Task 3
 
-```bash
-cd d:\kaiburr\task3
-```
+## License
 
-### 2. Install Dependencies
-
-Using npm:
-```bash
-npm install
-```
-
-Or using yarn:
-```bash
-yarn install
-```
-
-### 3. Verify Backend is Running
-
-Make sure the Task 1 backend API is running on `http://localhost:8080`:
-
-```bash
-# In the task1 directory
-mvn spring-boot:run
-```
-
-### 4. Start the Development Server
-
-Using npm:
-```bash
-npm run dev
-```
-
-The application will start on `http://localhost:3000` and automatically open in your browser.
-
-## Building for Production
-
-To create a production build:
-
-```bash
-npm run build
-```
-
-The optimized files will be in the `dist/` directory.
+This project is created for assessment purposes.
 
 To preview the production build:
 
@@ -238,3 +335,8 @@ Created for Kaiburr Assessment - Task 3
 
 This project is created for assessment purposes.
 
+
+
+## License
+
+This project is created for assessment purposes.
